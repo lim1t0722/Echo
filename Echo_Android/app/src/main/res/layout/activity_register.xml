@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".RegisterActivity"
-    android:background="@color/white">
+    android:background="?android:colorBackground">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
@@ -30,71 +30,93 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="16dp">
+            android:padding="8dp">
 
-            <androidx.appcompat.widget.AppCompatEditText
-                android:id="@+id/et_phone"
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/RoundedEditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="32dp"
-                android:hint="请输入手机号"
-                android:inputType="phone"
-                android:maxLength="11"
-                android:padding="16dp"
-                android:textSize="16sp"
+                android:layout_marginTop="16dp"
+                android:maxWidth="400dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent">
 
-            <androidx.appcompat.widget.AppCompatEditText
-                android:id="@+id/et_verification"
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_phone"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="请输入手机号"
+                    android:inputType="phone"
+                    android:maxLength="11"
+                    android:textSize="16sp" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/RoundedEditText"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:layout_marginEnd="16dp"
-                android:hint="请输入验证码"
-                android:inputType="number"
-                android:maxLength="6"
-                android:padding="16dp"
-                android:textSize="16sp"
+                android:layout_marginEnd="8dp"
+                android:maxWidth="260dp"
                 app:layout_constraintEnd_toStartOf="@+id/btn_get_verification"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/et_phone" />
+                app:layout_constraintTop_toBottomOf="@+id/et_phone"
+                app:layout_constraintWidth_percent="0.7">
 
-            <androidx.appcompat.widget.AppCompatButton
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_verification"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="请输入验证码"
+                    android:inputType="number"
+                    android:maxLength="6"
+                    android:textSize="16sp" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.button.MaterialButton
+                style="@style/RoundedButton"
                 android:id="@+id/btn_get_verification"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:background="@color/primary"
+                android:minWidth="120dp"
+                android:maxWidth="140dp"
                 android:text="获取验证码"
-                android:textColor="@color/white"
                 android:textSize="14sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/et_verification"
-                app:layout_constraintTop_toBottomOf="@+id/et_phone" />
+                app:layout_constraintTop_toBottomOf="@+id/et_phone"
+                app:layout_constraintWidth_percent="0.3" />
 
-            <androidx.appcompat.widget.AppCompatEditText
-                android:id="@+id/et_password"
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/RoundedEditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:hint="请设置密码"
-                android:inputType="textPassword"
-                android:padding="16dp"
-                android:textSize="16sp"
+                android:maxWidth="400dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/btn_get_verification" />
+                app:layout_constraintTop_toBottomOf="@+id/btn_get_verification"
+                app:passwordToggleEnabled="true">
 
-            <androidx.appcompat.widget.AppCompatButton
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_password"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="请设置密码"
+                    android:inputType="textPassword"
+                    android:textSize="16sp" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.button.MaterialButton
+                style="@style/RoundedButton"
                 android:id="@+id/btn_register"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="32dp"
-                android:background="@color/primary"
+                android:layout_marginTop="24dp"
+                android:maxWidth="400dp"
                 android:text="注册"
-                android:textColor="@color/white"
                 android:textSize="18sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
