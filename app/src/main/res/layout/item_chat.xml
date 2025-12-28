@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="8dp"
+    android:layout_marginVertical="4dp"
+    app:cardCornerRadius="8dp"
+    app:cardElevation="2dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="12dp">
+
+        <!-- 头像 -->
+        <ImageView
+            android:id="@+id/imageViewAvatar"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:src="@drawable/ic_launcher_background"
+            android:scaleType="centerCrop"
+            android:layout_marginRight="12dp"
+            app:shapeAppearanceOverlay="@style/CircleShape" />
+
+        <!-- 聊天信息 -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center_vertical">
+
+            <!-- 聊天名称和时间 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:id="@+id/textViewName"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="联系人名称"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:maxLines="1"
+                    android:ellipsize="end" />
+
+                <TextView
+                    android:id="@+id/textViewTime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="12:00"
+                    android:textSize="12sp"
+                    android:textColor="@android:color/darker_gray"
+                    android:layout_marginLeft="8dp" />
+            </LinearLayout>
+
+            <!-- 最后一条消息和未读数量 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="4dp"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:id="@+id/textViewLastMessage"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="这是最后一条消息"
+                    android:textSize="14sp"
+                    android:textColor="@android:color/darker_gray"
+                    android:maxLines="1"
+                    android:ellipsize="end" />
+
+                <TextView
+                    android:id="@+id/textViewUnreadCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_unread_count"
+                    android:text="3"
+                    android:textSize="12sp"
+                    android:textColor="@color/white"
+                    android:paddingHorizontal="8dp"
+                    android:paddingVertical="2dp"
+                    android:layout_marginLeft="8dp"
+                    android:visibility="gone" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>
