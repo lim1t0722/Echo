@@ -1,0 +1,16 @@
+# ===== Android =====
+*.iml
+.gradle
+/local.properties
+/.idea
+/build
+/captures
+
+# ===== Node =====
+node_modules/
+.env
+logs
+*.log
+
+# ===== OS =====
+.DS_Store
