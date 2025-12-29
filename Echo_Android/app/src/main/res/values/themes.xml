@@ -37,7 +37,8 @@
     <!-- 按钮圆角样式 -->
     <style name="RoundedButton" parent="Widget.MaterialComponents.Button">
         <item name="shapeAppearance">@style/RoundedShape</item>
-        <item name="android:paddingVertical">12dp</item>
+        <item name="android:paddingTop">12dp</item>
+        <item name="android:paddingBottom">12dp</item>
         <item name="android:textSize">16sp</item>
     </style>
 
@@ -45,8 +46,10 @@
     <style name="RoundedEditText" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
         <item name="shapeAppearance">@style/RoundedShape</item>
         <item name="boxStrokeWidth">1dp</item>
-        <item name="android:paddingHorizontal">16dp</item>
-        <item name="android:paddingVertical">12dp</item>
+        <item name="android:paddingLeft">16dp</item>
+        <item name="android:paddingRight">16dp</item>
+        <item name="android:paddingTop">12dp</item>
+        <item name="android:paddingBottom">12dp</item>
         <item name="android:textSize">16sp</item>
         <item name="hintTextColor">@color/gray</item>
     </style>
