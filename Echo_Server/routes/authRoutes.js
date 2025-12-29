@@ -1,11 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const authController = require('../controllers/authController');
+const { validateSendCode, validateVerifyCode } = require('../middlewares/validationMiddleware');
 
-// 发送验证码
-router.post('/send_code', authController.sendCode);
-
-// 验证验证码并登录
-router.post('/verify_code', authController.verifyCode);
+router.post('/sendCode', validateSendCode, authController.sendCode);
+router.post('/verifyCode', validateVerifyCode, authController.verifyCode);
 
 module.exports = router;
