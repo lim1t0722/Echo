@@ -2,6 +2,7 @@ package com.example.xfj.model;
 
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 @Entity(tableName = "group_members", primaryKeys = {"groupId", "userId"})
@@ -19,14 +20,25 @@ public class GroupMember {
     private String role;
     private boolean isOnline;
 
+    @Ignore
     public GroupMember() {
     }
 
+    @Ignore
     public GroupMember(String userId, String nickname, String phone, String role) {
         this.userId = userId;
         this.nickname = nickname;
         this.phone = phone;
         this.role = role;
+    }
+
+    public GroupMember(@NonNull String groupId, @NonNull String userId, String nickname, String phone, String role, boolean isOnline) {
+        this.groupId = groupId;
+        this.userId = userId;
+        this.nickname = nickname;
+        this.phone = phone;
+        this.role = role;
+        this.isOnline = isOnline;
     }
 
     public String getGroupId() {

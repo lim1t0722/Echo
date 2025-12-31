@@ -8,6 +8,7 @@ const MAX_ATTEMPTS = 2;
 
 exports.sendCode = async (req, res) => {
   try {
+    console.log('[接收请求] /api/send_sms', req.body);
     const { phone } = req.body;
     
     if (!phone || !/^1[3-9]\d{9}$/.test(phone)) {
@@ -45,7 +46,7 @@ exports.sendCode = async (req, res) => {
         count: lastSend ? lastSend.count + 1 : 1
       });
       
-      console.log(`[发送验证码] 手机号: ${phone}, 请求ID: ${result.requestId}`);
+      console.log(`[发送验证码成功] 手机号: ${phone}, 验证码: ${result.verifyCode}, 请求ID: ${result.requestId}`);
       
       res.status(200).json({
         code: 0,
@@ -53,7 +54,7 @@ exports.sendCode = async (req, res) => {
         data: null
       });
     } else {
-      console.error(`[发送验证码失败] 手机号: ${phone}, 错误: ${result.message}`);
+      console.error(`[发送验证码失败] 手机号: ${phone}, 错误: ${result.message}, 错误码: ${result.code}`);
       
       res.status(400).json({
         code: 400,

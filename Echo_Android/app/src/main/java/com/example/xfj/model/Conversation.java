@@ -36,7 +36,7 @@ public class Conversation implements Parcelable {
         name = in.readString();
         avatarUrl = in.readString();
         participantIds = in.createStringArrayList();
-        lastMessage = in.readParcelable(Message.class.getClassLoader());
+        lastMessage = in.readParcelable(Message.class.getClassLoader(), Message.class);
         updateTime = in.readLong();
         unreadCount = in.readInt();
         isMuted = in.readByte() != 0;

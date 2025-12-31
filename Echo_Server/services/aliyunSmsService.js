@@ -12,24 +12,45 @@ class AliyunSmsService {
     this.client = new Dysmsapi.default(config);
   }
 
+  generateVerifyCode() {
+    return Math.floor(100000 + Math.random() * 900000).toString();
+  }
+
   async sendSmsVerifyCode(phoneNumber) {
     try {
+      const verifyCode = this.generateVerifyCode();
+      
       const request = new Dysmsapi.SendSmsRequest({
         phoneNumbers: phoneNumber,
         signName: process.env.ALIYUN_SMS_SIGN_NAME,
-        templateCode: process.env.ALIYUN_SMS_TEMPLATE_CODE
+        templateCode: process.env.ALIYUN_SMS_TEMPLATE_CODE,
+        templateParam: JSON.stringify({
+          code: verifyCode,
+          min: "5"
+        })
       });
+
+      console.log('[发送短信请求] 参数:', JSON.stringify({
+        phoneNumbers: phoneNumber,
+        signName: process.env.ALIYUN_SMS_SIGN_NAME,
+        templateCode: process.env.ALIYUN_SMS_TEMPLATE_CODE,
+        templateParam: {
+          code: verifyCode,
+          min: "5"
+        }
+      }));
 
       const response = await this.client.sendSms(request);
       
-      console.log('发送短信验证码响应:', JSON.stringify(response.body));
+      console.log('[发送短信响应] 完整返回:', JSON.stringify(response.body));
       
       if (response.body.code === 'OK') {
         return {
           success: true,
           message: '验证码已发送',
           requestId: response.body.requestId,
-          bizId: response.body.bizId
+          bizId: response.body.bizId,
+          verifyCode: verifyCode
         };
       } else {
         return {
@@ -39,7 +60,7 @@ class AliyunSmsService {
         };
       }
     } catch (error) {
-      console.error('发送短信验证码异常:', error);
+      console.error('[发送短信异常] 错误信息:', error);
       return {
         success: false,
         message: error.message || '发送验证码失败',

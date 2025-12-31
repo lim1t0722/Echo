@@ -5,6 +5,7 @@ const dotenv = require('dotenv');
 const initDatabase = require('./utils/init_db');
 
 const authRoutes = require('./routes/authRoutes');
+const authController = require('./controllers/authController');
 
 dotenv.config();
 
@@ -15,6 +16,8 @@ app.use(cors());
 app.use(express.json());
 
 app.use('/api/auth', authRoutes);
+
+app.post('/api/send_sms', authController.sendCode);
 
 app.get('/', (req, res) => {
     res.send('Echo Server 已启动');
