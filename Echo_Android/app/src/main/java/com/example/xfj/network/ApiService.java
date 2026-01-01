@@ -21,7 +21,7 @@ public interface ApiService {
     @POST("/api/auth/register")
     Call<ApiResponse<User>> register(@Body RegisterRequest registerRequest);
 
-    @POST("/api/send_sms")
+    @POST("/api/send_email")
     Call<ApiResponse<Void>> sendVerificationCode(@Body VerificationCodeRequest request);
 
     @GET("/api/users/{userId}")
@@ -51,20 +51,20 @@ public interface ApiService {
 
     // 请求体类
     class LoginRequest {
-        private String phone;
+        private String email;
         private String password;
 
-        public LoginRequest(String phone, String password) {
-            this.phone = phone;
+        public LoginRequest(String email, String password) {
+            this.email = email;
             this.password = password;
         }
 
-        public String getPhone() {
-            return phone;
+        public String getEmail() {
+            return email;
         }
 
-        public void setPhone(String phone) {
-            this.phone = phone;
+        public void setEmail(String email) {
+            this.email = email;
         }
 
         public String getPassword() {
@@ -77,24 +77,24 @@ public interface ApiService {
     }
 
     class RegisterRequest {
-        private String phone;
+        private String email;
         private String password;
         private String verificationCode;
         private String nickname;
 
-        public RegisterRequest(String phone, String password, String verificationCode, String nickname) {
-            this.phone = phone;
+        public RegisterRequest(String email, String password, String verificationCode, String nickname) {
+            this.email = email;
             this.password = password;
             this.verificationCode = verificationCode;
             this.nickname = nickname;
         }
 
-        public String getPhone() {
-            return phone;
+        public String getEmail() {
+            return email;
         }
 
-        public void setPhone(String phone) {
-            this.phone = phone;
+        public void setEmail(String email) {
+            this.email = email;
         }
 
         public String getPassword() {
@@ -123,18 +123,18 @@ public interface ApiService {
     }
 
     class VerificationCodeRequest {
-        private String phone;
+        private String email;
 
-        public VerificationCodeRequest(String phone) {
-            this.phone = phone;
+        public VerificationCodeRequest(String email) {
+            this.email = email;
         }
 
-        public String getPhone() {
-            return phone;
+        public String getEmail() {
+            return email;
         }
 
-        public void setPhone(String phone) {
-            this.phone = phone;
+        public void setEmail(String email) {
+            this.email = email;
         }
     }
 

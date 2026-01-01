@@ -11,12 +11,17 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import com.example.xfj.databinding.ActivityRegisterBinding;
+import com.example.xfj.model.User;
 import com.example.xfj.network.ApiResponse;
 import com.example.xfj.network.ApiService;
 import com.example.xfj.network.RetrofitClient;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+
+import java.net.ConnectException;
+import java.net.SocketTimeoutException;
+import java.net.UnknownHostException;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -50,15 +55,15 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void getVerificationCode() {
-        String phone = binding.etPhone.getText().toString().trim();
+        String email = binding.etEmail.getText().toString().trim();
 
-        if (phone.isEmpty()) {
-            Toast.makeText(this, "请输入手机号", Toast.LENGTH_SHORT).show();
+        if (email.isEmpty()) {
+            Toast.makeText(this, "请输入邮箱", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        if (phone.length() != 11) {
-            Toast.makeText(this, "请输入11位手机号", Toast.LENGTH_SHORT).show();
+        if (!isValidEmail(email)) {
+            Toast.makeText(this, "请输入有效的邮箱地址", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -72,7 +77,7 @@ public class RegisterActivity extends AppCompatActivity {
         }
 
         // 创建请求体
-        ApiService.VerificationCodeRequest request = new ApiService.VerificationCodeRequest(phone);
+        ApiService.VerificationCodeRequest request = new ApiService.VerificationCodeRequest(email);
         
         // 发送请求
         verificationCall = apiService.sendVerificationCode(request);
@@ -105,11 +110,11 @@ public class RegisterActivity extends AppCompatActivity {
             public void onFailure(Call<ApiResponse<Void>> call, Throwable t) {
                 // 网络异常或连接超时
                 String errorMessage = "网络异常";
-                if (t instanceof java.net.SocketTimeoutException) {
+                if (t instanceof SocketTimeoutException) {
                     errorMessage = "连接超时，请重试";
-                } else if (t instanceof java.net.ConnectException) {
+                } else if (t instanceof ConnectException) {
                     errorMessage = "连接失败，请检查网络";
-                } else if (t instanceof java.net.UnknownHostException) {
+                } else if (t instanceof UnknownHostException) {
                     errorMessage = "无法连接服务器";
                 }
                 Toast.makeText(RegisterActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
@@ -135,18 +140,18 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void register() {
-        String phone = binding.etPhone.getText().toString().trim();
+        String email = binding.etEmail.getText().toString().trim();
         String verificationCode = binding.etVerification.getText().toString().trim();
         String password = binding.etPassword.getText().toString().trim();
 
         // Validate inputs
-        if (phone.isEmpty() || verificationCode.isEmpty() || password.isEmpty()) {
+        if (email.isEmpty() || verificationCode.isEmpty() || password.isEmpty()) {
             Toast.makeText(this, "请填写完整信息", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        if (phone.length() != 11) {
-            Toast.makeText(this, "请输入11位手机号", Toast.LENGTH_SHORT).show();
+        if (!isValidEmail(email)) {
+            Toast.makeText(this, "请输入有效的邮箱地址", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -164,31 +169,73 @@ public class RegisterActivity extends AppCompatActivity {
         binding.progressBar.setVisibility(View.VISIBLE);
         binding.btnRegister.setVisibility(View.GONE);
 
-        // Simulate register API call
-        new Thread(() -> {
-            try {
-                Thread.sleep(1500); // Simulate network delay
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-
-            runOnUiThread(() -> {
+        // Create API service instance
+        ApiService apiService = RetrofitClient.getInstance(this).getApiService();
+        
+        // Use nickname as the part before @ in email
+        String nickname = "用户" + email.substring(0, email.indexOf('@'));
+        
+        // Call register API
+        Call<ApiResponse<User>> call = apiService.register(new ApiService.RegisterRequest(email, password, verificationCode, nickname));
+        
+        call.enqueue(new Callback<ApiResponse<User>>() {
+            @Override
+            public void onResponse(Call<ApiResponse<User>> call, Response<ApiResponse<User>> response) {
                 // Hide loading
                 binding.progressBar.setVisibility(View.GONE);
                 binding.btnRegister.setVisibility(View.VISIBLE);
+                
+                if (response.isSuccessful()) {
+                    ApiResponse<User> apiResponse = response.body();
+                    if (apiResponse != null && apiResponse.getCode() == 0) {
+                        // Register success
+                        User user = apiResponse.getData();
+                        
+                        // Store user info in SharedPreferences
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                        editor.putString("token", "sample_token_" + email); // TODO: Replace with actual token from API response
+                        editor.putString("email", email);
+                        editor.putString("user_id", user != null ? user.getUserId() : "user_" + email);
+                        editor.putString("nickname", nickname);
+                        editor.apply();
+                        
+                        Toast.makeText(RegisterActivity.this, "注册成功", Toast.LENGTH_SHORT).show();
+                        navigateToMain();
+                    } else {
+                        // Register failed with error message
+                        String errorMessage = apiResponse != null ? apiResponse.getMessage() : "注册失败";
+                        Toast.makeText(RegisterActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    // Network error or server error
+                    Toast.makeText(RegisterActivity.this, "注册失败，请检查网络", Toast.LENGTH_SHORT).show();
+                }
+            }
+            
+            @Override
+            public void onFailure(Call<ApiResponse<User>> call, Throwable t) {
+                // Hide loading
+                binding.progressBar.setVisibility(View.GONE);
+                binding.btnRegister.setVisibility(View.VISIBLE);
+                
+                // Network error
+                String errorMessage = "网络异常";
+                if (t instanceof SocketTimeoutException) {
+                    errorMessage = "连接超时，请重试";
+                } else if (t instanceof ConnectException) {
+                    errorMessage = "连接失败，请检查网络";
+                } else if (t instanceof UnknownHostException) {
+                    errorMessage = "无法连接服务器";
+                }
+                Toast.makeText(RegisterActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
 
-                // Store user info in SharedPreferences
-                SharedPreferences.Editor editor = sharedPreferences.edit();
-                editor.putString("token", "sample_token_" + phone);
-                editor.putString("phone", phone);
-                editor.putString("user_id", "user_" + phone);
-                editor.putString("nickname", "用户" + phone.substring(7));
-                editor.apply();
-
-                Toast.makeText(RegisterActivity.this, "注册成功", Toast.LENGTH_SHORT).show();
-                navigateToMain();
-            });
-        }).start();
+    // 邮箱格式验证
+    private boolean isValidEmail(String email) {
+        String emailPattern = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
+        return email.matches(emailPattern);
     }
 
     private void navigateToMain() {

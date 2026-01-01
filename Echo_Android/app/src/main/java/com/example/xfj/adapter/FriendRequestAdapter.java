@@ -52,7 +52,6 @@ public class FriendRequestAdapter extends RecyclerView.Adapter<FriendRequestAdap
     public static class FriendRequestViewHolder extends RecyclerView.ViewHolder {
         private ImageView ivAvatar;
         private TextView tvNickname;
-        private TextView tvPhone;
         private Button btnAccept;
         private Button btnReject;
 
@@ -60,14 +59,12 @@ public class FriendRequestAdapter extends RecyclerView.Adapter<FriendRequestAdap
             super(itemView);
             ivAvatar = itemView.findViewById(R.id.iv_avatar);
             tvNickname = itemView.findViewById(R.id.tv_nickname);
-            tvPhone = itemView.findViewById(R.id.tv_phone);
             btnAccept = itemView.findViewById(R.id.btn_accept);
             btnReject = itemView.findViewById(R.id.btn_reject);
         }
 
         public void bind(FriendRequest request, OnRequestActionListener listener) {
             tvNickname.setText(request.getFromUserNickname());
-            tvPhone.setText(request.getFromUserPhone());
 
             btnAccept.setOnClickListener(v -> listener.onAccept(request));
             btnReject.setOnClickListener(v -> listener.onReject(request));

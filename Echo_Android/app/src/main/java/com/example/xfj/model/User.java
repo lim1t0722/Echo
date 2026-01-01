@@ -1,64 +1,34 @@
 package com.example.xfj.model;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
 @Entity(tableName = "users")
-
-public class User implements Parcelable {
-    @PrimaryKey
+public class User {
     @NonNull
+    @PrimaryKey
     private String userId;
-    private String phone;
+    private String email;
     private String nickname;
-    private String avatarUrl;
-    private String status;
-    private long createTime;
+    private String avatar;
     private long lastLoginTime;
 
-    public User() {
-    }
-
-    protected User(Parcel in) {
-        userId = in.readString();
-        phone = in.readString();
-        nickname = in.readString();
-        avatarUrl = in.readString();
-        status = in.readString();
-        createTime = in.readLong();
-        lastLoginTime = in.readLong();
-    }
-
-    public static final Creator<User> CREATOR = new Creator<User>() {
-        @Override
-        public User createFromParcel(Parcel in) {
-            return new User(in);
-        }
-
-        @Override
-        public User[] newArray(int size) {
-            return new User[size];
-        }
-    };
-
+    @NonNull
     public String getUserId() {
         return userId;
     }
 
-    public void setUserId(String userId) {
+    public void setUserId(@NonNull String userId) {
         this.userId = userId;
     }
 
-    public String getPhone() {
-        return phone;
+    public String getEmail() {
+        return email;
     }
 
-    public void setPhone(String phone) {
-        this.phone = phone;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getNickname() {
@@ -69,28 +39,12 @@ public class User implements Parcelable {
         this.nickname = nickname;
     }
 
-    public String getAvatarUrl() {
-        return avatarUrl;
+    public String getAvatar() {
+        return avatar;
     }
 
-    public void setAvatarUrl(String avatarUrl) {
-        this.avatarUrl = avatarUrl;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public long getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(long createTime) {
-        this.createTime = createTime;
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
     }
 
     public long getLastLoginTime() {
@@ -99,21 +53,5 @@ public class User implements Parcelable {
 
     public void setLastLoginTime(long lastLoginTime) {
         this.lastLoginTime = lastLoginTime;
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(@NonNull Parcel parcel, int i) {
-        parcel.writeString(userId);
-        parcel.writeString(phone);
-        parcel.writeString(nickname);
-        parcel.writeString(avatarUrl);
-        parcel.writeString(status);
-        parcel.writeLong(createTime);
-        parcel.writeLong(lastLoginTime);
     }
 }

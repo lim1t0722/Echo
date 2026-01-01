@@ -80,17 +80,17 @@ public class ChatListFragment extends Fragment {
         // 创建模拟用户
         User user1 = new User();
         user1.setUserId("user_1234567890");
-        user1.setPhone("12345678901");
+        user1.setEmail("zhangsan@example.com");
         user1.setNickname("张三");
 
         User user2 = new User();
         user2.setUserId("user_0987654321");
-        user2.setPhone("12345678902");
+        user2.setEmail("lisi@example.com");
         user2.setNickname("李四");
 
         User user3 = new User();
         user3.setUserId("user_5555555555");
-        user3.setPhone("12345678903");
+        user3.setEmail("wangwu@example.com");
         user3.setNickname("王五");
 
         // 创建模拟消息

@@ -1,65 +1,40 @@
 package com.example.xfj.model;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
+import androidx.room.TypeConverters;
 
+import java.util.Date;
 import java.util.List;
 
 @Entity(tableName = "conversations")
-public class Conversation implements Parcelable {
-    public static final int TYPE_SINGLE = 1;
-    public static final int TYPE_GROUP = 2;
+@TypeConverters(com.example.xfj.data.database.TypeConverters.class)
+public class Conversation {
+    public static final int TYPE_SINGLE = 0;
+    public static final int TYPE_GROUP = 1;
 
-    @PrimaryKey
     @NonNull
+    @PrimaryKey
     private String conversationId;
-    private int type; // 1: single, 2: group
+    private int type;
+    private User otherUser;
+    private Message lastMessage;
+    private int unreadCount;
+    private Date updateTime;
+    private boolean isGroup;
+    private boolean isPinned;
+    private boolean isMuted;
     private String name;
     private String avatarUrl;
     private List<String> participantIds;
-    private Message lastMessage;
-    private long updateTime;
-    private int unreadCount;
-    private boolean isMuted;
-    private boolean isPinned;
 
-    public Conversation() {
-    }
-
-    protected Conversation(Parcel in) {
-        conversationId = in.readString();
-        type = in.readInt();
-        name = in.readString();
-        avatarUrl = in.readString();
-        participantIds = in.createStringArrayList();
-        lastMessage = in.readParcelable(Message.class.getClassLoader(), Message.class);
-        updateTime = in.readLong();
-        unreadCount = in.readInt();
-        isMuted = in.readByte() != 0;
-        isPinned = in.readByte() != 0;
-    }
-
-    public static final Creator<Conversation> CREATOR = new Creator<Conversation>() {
-        @Override
-        public Conversation createFromParcel(Parcel in) {
-            return new Conversation(in);
-        }
-
-        @Override
-        public Conversation[] newArray(int size) {
-            return new Conversation[size];
-        }
-    };
-
+    @NonNull
     public String getConversationId() {
         return conversationId;
     }
 
-    public void setConversationId(String conversationId) {
+    public void setConversationId(@NonNull String conversationId) {
         this.conversationId = conversationId;
     }
 
@@ -71,8 +46,68 @@ public class Conversation implements Parcelable {
         this.type = type;
     }
 
+    public User getOtherUser() {
+        return otherUser;
+    }
+
+    public void setOtherUser(User otherUser) {
+        this.otherUser = otherUser;
+    }
+
+    public Message getLastMessage() {
+        return lastMessage;
+    }
+
+    public void setLastMessage(Message lastMessage) {
+        this.lastMessage = lastMessage;
+    }
+
+    public int getUnreadCount() {
+        return unreadCount;
+    }
+
+    public void setUnreadCount(int unreadCount) {
+        this.unreadCount = unreadCount;
+    }
+
+    public Date getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTime(Date updateTime) {
+        this.updateTime = updateTime;
+    }
+
+    public boolean isGroup() {
+        return isGroup;
+    }
+
+    public void setGroup(boolean group) {
+        isGroup = group;
+    }
+
+    public boolean isPinned() {
+        return isPinned;
+    }
+
+    public void setPinned(boolean pinned) {
+        isPinned = pinned;
+    }
+
+    public boolean isMuted() {
+        return isMuted;
+    }
+
+    public void setMuted(boolean muted) {
+        isMuted = muted;
+    }
+
+    // 用于显示对话名称
     public String getName() {
-        return name;
+        if (otherUser != null) {
+            return otherUser.getNickname();
+        }
+        return name != null ? name : "";
     }
 
     public void setName(String name) {
@@ -95,62 +130,7 @@ public class Conversation implements Parcelable {
         this.participantIds = participantIds;
     }
 
-    public Message getLastMessage() {
-        return lastMessage;
-    }
-
-    public void setLastMessage(Message lastMessage) {
-        this.lastMessage = lastMessage;
-    }
-
-    public long getUpdateTime() {
-        return updateTime;
-    }
-
-    public void setUpdateTime(long updateTime) {
-        this.updateTime = updateTime;
-    }
-
-    public int getUnreadCount() {
-        return unreadCount;
-    }
-
-    public void setUnreadCount(int unreadCount) {
-        this.unreadCount = unreadCount;
-    }
-
-    public boolean isMuted() {
-        return isMuted;
-    }
-
-    public void setMuted(boolean muted) {
-        isMuted = muted;
-    }
-
-    public boolean isPinned() {
-        return isPinned;
-    }
-
-    public void setPinned(boolean pinned) {
-        isPinned = pinned;
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(@NonNull Parcel parcel, int i) {
-        parcel.writeString(conversationId);
-        parcel.writeInt(type);
-        parcel.writeString(name);
-        parcel.writeString(avatarUrl);
-        parcel.writeStringList(participantIds);
-        parcel.writeParcelable(lastMessage, i);
-        parcel.writeLong(updateTime);
-        parcel.writeInt(unreadCount);
-        parcel.writeByte((byte) (isMuted ? 1 : 0));
-        parcel.writeByte((byte) (isPinned ? 1 : 0));
+    public void setUpdateTime(long timestamp) {
+        this.updateTime = new Date(timestamp);
     }
 }

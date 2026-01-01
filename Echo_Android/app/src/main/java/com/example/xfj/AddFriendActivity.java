@@ -28,7 +28,6 @@ public class AddFriendActivity extends AppCompatActivity {
     private LinearLayout layoutSearchResult;
     private ImageView ivAvatar;
     private TextView tvNickname;
-    private TextView tvPhone;
     private Button btnAddFriend;
     private RecyclerView rvFriendRequests;
 
@@ -65,7 +64,6 @@ public class AddFriendActivity extends AppCompatActivity {
         layoutSearchResult = findViewById(R.id.layout_search_result);
         ivAvatar = findViewById(R.id.iv_avatar);
         tvNickname = findViewById(R.id.tv_nickname);
-        tvPhone = findViewById(R.id.tv_phone);
         btnAddFriend = findViewById(R.id.btn_add_friend);
         rvFriendRequests = findViewById(R.id.rv_friend_requests);
         
@@ -90,7 +88,6 @@ public class AddFriendActivity extends AppCompatActivity {
         request1.setFromUserId("user_789");
         request1.setToUserId("user_123");
         request1.setFromUserNickname("赵六");
-        request1.setFromUserPhone("12345678907");
         request1.setTimestamp(System.currentTimeMillis() - 3600000);
         request1.setStatus(FriendRequest.STATUS_PENDING);
         request1.setMessage("你好，我是赵六");
@@ -101,7 +98,6 @@ public class AddFriendActivity extends AppCompatActivity {
         request2.setFromUserId("user_456");
         request2.setToUserId("user_123");
         request2.setFromUserNickname("孙七");
-        request2.setFromUserPhone("12345678908");
         request2.setTimestamp(System.currentTimeMillis() - 7200000);
         request2.setStatus(FriendRequest.STATUS_PENDING);
         request2.setMessage("很高兴认识你");
@@ -149,12 +145,11 @@ public class AddFriendActivity extends AppCompatActivity {
         // 模拟搜索结果（实际项目中应该调用API）
         searchResultUser = new User();
         searchResultUser.setUserId("user_111");
-        searchResultUser.setPhone("12345678904");
+        searchResultUser.setEmail("test@example.com");
         searchResultUser.setNickname("测试用户");
 
         // 显示搜索结果
         tvNickname.setText(searchResultUser.getNickname());
-        tvPhone.setText(searchResultUser.getPhone());
         layoutSearchResult.setVisibility(View.VISIBLE);
     }
 

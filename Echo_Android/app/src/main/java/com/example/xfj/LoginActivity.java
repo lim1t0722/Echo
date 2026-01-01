@@ -43,17 +43,17 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void login() {
-        String phone = binding.etPhone.getText().toString().trim();
+        String email = binding.etEmail.getText().toString().trim();
         String password = binding.etPassword.getText().toString().trim();
 
         // Validate inputs
-        if (phone.isEmpty() || password.isEmpty()) {
-            Toast.makeText(this, "请输入手机号和密码", Toast.LENGTH_SHORT).show();
+        if (email.isEmpty() || password.isEmpty()) {
+            Toast.makeText(this, "请输入邮箱和密码", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        if (phone.length() != 11) {
-            Toast.makeText(this, "请输入11位手机号", Toast.LENGTH_SHORT).show();
+        if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            Toast.makeText(this, "请输入有效的邮箱地址", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -76,10 +76,10 @@ public class LoginActivity extends AppCompatActivity {
 
                 // Store token in SharedPreferences
                 SharedPreferences.Editor editor = sharedPreferences.edit();
-                editor.putString("token", "sample_token_" + phone);
-                editor.putString("phone", phone);
-                editor.putString("user_id", "user_" + phone);
-                editor.putString("nickname", "用户" + phone.substring(7));
+                editor.putString("token", "sample_token_" + email);
+                editor.putString("email", email);
+                editor.putString("user_id", "user_" + email.replace("@", "_"));
+                editor.putString("nickname", "用户" + email.split("@")[0]);
                 editor.apply();
 
                 Toast.makeText(LoginActivity.this, "登录成功", Toast.LENGTH_SHORT).show();

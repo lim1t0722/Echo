@@ -10,7 +10,6 @@ public class FriendRequest {
     private String fromUserId;
     private String toUserId;
     private String fromUserNickname;
-    private String fromUserPhone;
     private long timestamp;
     private int status;
     private String message;
@@ -48,14 +47,6 @@ public class FriendRequest {
 
     public void setFromUserNickname(String fromUserNickname) {
         this.fromUserNickname = fromUserNickname;
-    }
-
-    public String getFromUserPhone() {
-        return fromUserPhone;
-    }
-
-    public void setFromUserPhone(String fromUserPhone) {
-        this.fromUserPhone = fromUserPhone;
     }
 
     public long getTimestamp() {

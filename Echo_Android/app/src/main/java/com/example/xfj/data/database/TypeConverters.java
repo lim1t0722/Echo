@@ -6,6 +6,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -59,5 +60,49 @@ public class TypeConverters {
             return null;
         }
         return gson.fromJson(json, com.example.xfj.model.Message.class);
+    }
+
+    /**
+     * 将User对象转换为JSON字符串
+     */
+    @TypeConverter
+    public static String fromUser(com.example.xfj.model.User user) {
+        if (user == null) {
+            return null;
+        }
+        return gson.toJson(user);
+    }
+
+    /**
+     * 将JSON字符串转换为User对象
+     */
+    @TypeConverter
+    public static com.example.xfj.model.User toUser(String json) {
+        if (json == null) {
+            return null;
+        }
+        return gson.fromJson(json, com.example.xfj.model.User.class);
+    }
+
+    /**
+     * 将Date转换为Long类型的时间戳
+     */
+    @TypeConverter
+    public static Long fromDate(Date date) {
+        if (date == null) {
+            return null;
+        }
+        return date.getTime();
+    }
+
+    /**
+     * 将Long类型的时间戳转换为Date
+     */
+    @TypeConverter
+    public static Date toDate(Long timestamp) {
+        if (timestamp == null) {
+            return null;
+        }
+        return new Date(timestamp);
     }
 }

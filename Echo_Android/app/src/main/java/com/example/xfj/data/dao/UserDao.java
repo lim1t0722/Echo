@@ -28,9 +28,6 @@ public interface UserDao {
     @Query("SELECT * FROM users WHERE userId = :userId")
     User getUserById(String userId);
 
-    @Query("SELECT * FROM users WHERE phone = :phone")
-    User getUserByPhone(String phone);
-
     @Query("SELECT * FROM users ORDER BY lastLoginTime DESC")
     List<User> getAllUsers();
 

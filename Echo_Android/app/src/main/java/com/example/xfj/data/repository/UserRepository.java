@@ -48,16 +48,6 @@ public class UserRepository {
         });
     }
 
-    // 从数据库获取用户（通过手机号）
-    public void getUserByPhone(String phone, OnUserLoadedCallback callback) {
-        executorService.execute(() -> {
-            User user = userDao.getUserByPhone(phone);
-            if (callback != null) {
-                callback.onUserLoaded(user);
-            }
-        });
-    }
-
     // 保存用户到数据库
     public void saveUser(User user) {
         executorService.execute(() -> {
