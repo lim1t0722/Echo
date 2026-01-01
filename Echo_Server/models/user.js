@@ -71,6 +71,50 @@ class User {
   getMaskedPhone() {
     return this.phone.replace(/(\d{3})\d{4}(\d{4})/, '$1****$2');
   }
+
+  static async verifyPassword(storedPassword, inputPassword) {
+    try {
+      // 由于当前没有加密，直接比较
+      // 实际项目中应该使用bcrypt等加密算法
+      return storedPassword === inputPassword;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  static async updateUserInfo(userId, nickname, avatar) {
+    try {
+      const updateFields = [];
+      const updateValues = [];
+
+      if (nickname !== undefined) {
+        updateFields.push('nickname = ?');
+        updateValues.push(nickname);
+      }
+      if (avatar !== undefined) {
+        updateFields.push('avatar = ?');
+        updateValues.push(avatar);
+      }
+
+      if (updateFields.length === 0) {
+        // 没有需要更新的字段
+        const user = await this.findByUserId(userId);
+        return user ? user.getBasicInfo() : null;
+      }
+
+      updateValues.push(userId);
+      const sql = `UPDATE users SET ${updateFields.join(', ')} WHERE user_id = ?`;
+      
+      await db.execute(sql, updateValues);
+      
+      // 返回更新后的用户信息
+      const updatedUser = await this.findByUserId(userId);
+      return updatedUser ? updatedUser.getBasicInfo() : null;
+    } catch (error) {
+      console.error('更新用户信息失败:', error);
+      throw error;
+    }
+  }
 }
 
 module.exports = User;

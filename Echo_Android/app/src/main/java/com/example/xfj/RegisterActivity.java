@@ -196,11 +196,14 @@ public class RegisterActivity extends AppCompatActivity {
                         editor.putString("token", "sample_token_" + email); // TODO: Replace with actual token from API response
                         editor.putString("email", email);
                         editor.putString("user_id", user != null ? user.getUserId() : "user_" + email);
-                        editor.putString("nickname", nickname);
+                        editor.putString("nickname", user != null && user.getNickname() != null ? user.getNickname() : nickname);
+                        if (user != null && user.getAvatar() != null) {
+                            editor.putString("avatar", user.getAvatar());
+                        }
                         editor.apply();
                         
-                        Toast.makeText(RegisterActivity.this, "注册成功", Toast.LENGTH_SHORT).show();
-                        navigateToMain();
+                        Toast.makeText(RegisterActivity.this, "注册成功，请设置用户名", Toast.LENGTH_SHORT).show();
+                        navigateToSetUsername();
                     } else {
                         // Register failed with error message
                         String errorMessage = apiResponse != null ? apiResponse.getMessage() : "注册失败";
@@ -240,6 +243,13 @@ public class RegisterActivity extends AppCompatActivity {
 
     private void navigateToMain() {
         Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        finish();
+    }
+
+    private void navigateToSetUsername() {
+        Intent intent = new Intent(RegisterActivity.this, SetUsernameActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
         finish();

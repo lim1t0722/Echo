@@ -33,6 +33,11 @@
             android:label="注册"
             android:theme="@style/Theme.XFJ.NoActionBar" />
         <activity
+            android:name=".SetUsernameActivity"
+            android:exported="false"
+            android:label="设置用户名"
+            android:theme="@style/Theme.XFJ.NoActionBar" />
+        <activity
             android:name=".MainActivity"
             android:exported="false"
             android:label="@string/app_name"

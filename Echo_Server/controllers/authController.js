@@ -221,6 +221,125 @@ exports.register = async (req, res) => {
   }
 };
 
+exports.login = async (req, res) => {
+  try {
+    console.log('[接收请求] /api/auth/login', req.body);
+    const { email, password } = req.body;
+    
+    // 参数验证
+    if (!email || !/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email)) {
+      return res.status(400).json({
+        code: 400,
+        message: '请输入有效的邮箱地址',
+        data: null
+      });
+    }
+    
+    if (!password) {
+      return res.status(400).json({
+        code: 400,
+        message: '请输入密码',
+        data: null
+      });
+    }
+    
+    // 查找用户
+    const user = await User.findByEmail(email);
+    if (!user) {
+      return res.status(400).json({
+        code: 400,
+        message: '邮箱或密码错误',
+        data: null
+      });
+    }
+    
+    // 验证密码
+    const passwordMatch = await User.verifyPassword(user.password, password);
+    if (!passwordMatch) {
+      return res.status(400).json({
+        code: 400,
+        message: '邮箱或密码错误',
+        data: null
+      });
+    }
+    
+    console.log(`[用户登录成功] 邮箱: ${email}, 用户ID: ${user.user_id}`);
+    
+    res.status(200).json({
+      code: 0,
+      message: '登录成功',
+      data: {
+        user_id: user.user_id,
+        nickname: user.nickname,
+        email: user.email,
+        avatar: user.avatar
+      }
+    });
+  } catch (error) {
+    console.error('登录异常:', error);
+    res.status(500).json({
+      code: 500,
+      message: '服务器内部错误',
+      data: null
+    });
+  }
+};
+
+exports.updateUserInfo = async (req, res) => {
+  try {
+    console.log('[接收请求] /api/users/update', req.body);
+    const { userId, nickname, avatar } = req.body;
+    
+    // 参数验证
+    if (!userId) {
+      return res.status(400).json({
+        code: 400,
+        message: '用户ID不能为空',
+        data: null
+      });
+    }
+    
+    if (nickname && (nickname.length < 2 || nickname.length > 20)) {
+      return res.status(400).json({
+        code: 400,
+        message: '昵称长度应在2-20个字符之间',
+        data: null
+      });
+    }
+    
+    // 更新用户信息
+    const updatedUser = await User.updateUserInfo(userId, nickname, avatar);
+    
+    if (!updatedUser) {
+      return res.status(404).json({
+        code: 404,
+        message: '用户不存在',
+        data: null
+      });
+    }
+    
+    console.log(`[用户信息更新成功] 用户ID: ${userId}`);
+    
+    res.status(200).json({
+      code: 0,
+      message: '用户信息更新成功',
+      data: {
+        user_id: updatedUser.user_id,
+        nickname: updatedUser.nickname,
+        email: updatedUser.email,
+        avatar: updatedUser.avatar
+      }
+    });
+  } catch (error) {
+    console.error('更新用户信息异常:', error);
+    res.status(500).json({
+      code: 500,
+      message: '服务器内部错误',
+      data: null
+    });
+  }
+};
+
 exports.verifyCode = async (req, res) => {
   try {
     const { phone, email, code } = req.body;

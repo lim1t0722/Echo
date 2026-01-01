@@ -33,6 +33,6 @@ public class ApiResponse<T> {
     }
 
     public boolean isSuccess() {
-        return code == 200;
+        return code == 0;
     }
 }

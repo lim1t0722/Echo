@@ -1,5 +1,6 @@
 package com.example.xfj;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Menu;
@@ -48,26 +49,30 @@ public class MainActivity extends AppCompatActivity {
                 .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
-        NavigationUI.setupWithNavController(navigationView, navController);
-
-        // 添加导航菜单项点击监听
-        navigationView.setNavigationItemSelectedListener(item -> {
-            int id = item.getItemId();
-            
-            if (id == R.id.nav_chat_list || id == R.id.nav_contacts || id == R.id.nav_groups) {
-                // 默认导航处理
-                NavigationUI.onNavDestinationSelected(item, navController);
-                drawer.closeDrawer(GravityCompat.START);
-                return true;
-            } else if (id == R.id.nav_add_friend) {
-                // 处理添加好友菜单项
-                AddFriendActivity.start(this);
-                drawer.closeDrawer(GravityCompat.START);
-                return true;
-            }
-            
-            return false;
-        });
+        
+        // 设置导航菜单项点击监听
+            navigationView.setNavigationItemSelectedListener(item -> {
+                int id = item.getItemId();
+                
+                if (id == R.id.nav_chat_list || id == R.id.nav_contacts || id == R.id.nav_groups) {
+                    // 默认导航处理
+                    boolean handled = NavigationUI.onNavDestinationSelected(item, navController);
+                    drawer.closeDrawer(GravityCompat.START);
+                    return handled;
+                } else if (id == R.id.nav_add_friend) {
+                    // 处理添加好友菜单项
+                    AddFriendActivity.start(this);
+                    drawer.closeDrawer(GravityCompat.START);
+                    return true;
+                } else if (id == R.id.nav_settings) {
+                    // 处理设置菜单项
+                    showSettingsDialog();
+                    drawer.closeDrawer(GravityCompat.START);
+                    return true;
+                }
+                
+                return false;
+            });
     }
 
     @Override
@@ -82,5 +87,29 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
         return NavigationUI.navigateUp(navController, mAppBarConfiguration)
                 || super.onSupportNavigateUp();
+    }
+
+    private void showSettingsDialog() {
+        new android.app.AlertDialog.Builder(this)
+                .setTitle("设置")
+                .setItems(new String[]{"退出登录"}, (dialog, which) -> {
+                    if (which == 0) {
+                        logout();
+                    }
+                    dialog.dismiss();
+                })
+                .setNegativeButton("取消", null)
+                .show();
+    }
+
+    private void logout() {
+        // 清除用户登录信息
+        getSharedPreferences("user_prefs", MODE_PRIVATE).edit().clear().apply();
+        
+        // 跳转到登录页面
+        Intent intent = new Intent(this, LoginActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        finish();
     }
 }

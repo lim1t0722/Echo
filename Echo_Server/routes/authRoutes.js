@@ -6,5 +6,6 @@ const { validateSendSmsCode, validateVerifyCode } = require('../middlewares/vali
 router.post('/sendCode', validateSendSmsCode, authController.sendCode);
 router.post('/verifyCode', validateVerifyCode, authController.verifyCode);
 router.post('/register', authController.register);
+router.post('/login', authController.login);
 
 module.exports = router;

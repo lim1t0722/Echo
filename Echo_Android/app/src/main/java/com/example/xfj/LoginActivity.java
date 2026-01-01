@@ -10,6 +10,17 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import com.example.xfj.databinding.ActivityLoginBinding;
+import com.example.xfj.model.User;
+import com.example.xfj.network.ApiResponse;
+import com.example.xfj.network.ApiService;
+import com.example.xfj.network.RetrofitClient;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
+import java.net.ConnectException;
+import java.net.SocketTimeoutException;
+import java.net.UnknownHostException;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -29,8 +40,9 @@ public class LoginActivity extends AppCompatActivity {
         sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE);
 
         // Check if user is already logged in
-        String token = sharedPreferences.getString("token", null);
-        if (token != null) {
+        String userId = sharedPreferences.getString("user_id", null);
+        String email = sharedPreferences.getString("email", null);
+        if (userId != null && email != null) {
             navigateToMain();
             return;
         }
@@ -61,31 +73,66 @@ public class LoginActivity extends AppCompatActivity {
         binding.progressBar.setVisibility(View.VISIBLE);
         binding.btnLogin.setVisibility(View.GONE);
 
-        // Simulate login API call
-        new Thread(() -> {
-            try {
-                Thread.sleep(1500); // Simulate network delay
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-
-            runOnUiThread(() -> {
+        // 创建ApiService实例
+        ApiService apiService = RetrofitClient.getInstance(this).getApiService();
+        
+        // 调用登录API
+        Call<ApiResponse<User>> call = apiService.login(new ApiService.LoginRequest(email, password));
+        call.enqueue(new Callback<ApiResponse<User>>() {
+            @Override
+            public void onResponse(Call<ApiResponse<User>> call, Response<ApiResponse<User>> response) {
                 // Hide loading
                 binding.progressBar.setVisibility(View.GONE);
                 binding.btnLogin.setVisibility(View.VISIBLE);
-
-                // Store token in SharedPreferences
-                SharedPreferences.Editor editor = sharedPreferences.edit();
-                editor.putString("token", "sample_token_" + email);
-                editor.putString("email", email);
-                editor.putString("user_id", "user_" + email.replace("@", "_"));
-                editor.putString("nickname", "用户" + email.split("@")[0]);
-                editor.apply();
-
-                Toast.makeText(LoginActivity.this, "登录成功", Toast.LENGTH_SHORT).show();
-                navigateToMain();
-            });
-        }).start();
+                
+                if (response.isSuccessful()) {
+                    ApiResponse<User> apiResponse = response.body();
+                    if (apiResponse != null && apiResponse.getCode() == 0) {
+                        // Login success
+                        User user = apiResponse.getData();
+                        
+                        // Store user info in SharedPreferences
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                        editor.putString("token", "sample_token_" + email); // TODO: Replace with actual token from API response
+                        editor.putString("email", email);
+                        editor.putString("user_id", user != null ? user.getUserId() : "user_" + email);
+                        editor.putString("nickname", user != null ? user.getNickname() : "用户" + email.split("@")[0]);
+                        if (user != null && user.getAvatar() != null) {
+                            editor.putString("avatar", user.getAvatar());
+                        }
+                        editor.apply();
+                        
+                        Toast.makeText(LoginActivity.this, "登录成功", Toast.LENGTH_SHORT).show();
+                        navigateToMain();
+                    } else {
+                        // Login failed
+                        String errorMessage = apiResponse != null ? apiResponse.getMessage() : "登录失败";
+                        Toast.makeText(LoginActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    // Network error or server error
+                    Toast.makeText(LoginActivity.this, "登录失败，请检查网络", Toast.LENGTH_SHORT).show();
+                }
+            }
+            
+            @Override
+            public void onFailure(Call<ApiResponse<User>> call, Throwable t) {
+                // Hide loading
+                binding.progressBar.setVisibility(View.GONE);
+                binding.btnLogin.setVisibility(View.VISIBLE);
+                
+                // Network error
+                String errorMessage = "网络异常";
+                if (t instanceof SocketTimeoutException) {
+                    errorMessage = "连接超时，请重试";
+                } else if (t instanceof ConnectException) {
+                    errorMessage = "连接失败，请检查网络";
+                } else if (t instanceof UnknownHostException) {
+                    errorMessage = "无法连接服务器";
+                }
+                Toast.makeText(LoginActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void navigateToMain() {
