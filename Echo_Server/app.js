@@ -18,6 +18,7 @@ app.use(express.json());
 app.use('/api/auth', authRoutes);
 
 app.post('/api/send_sms', authController.sendCode);
+app.post('/api/send_email', authController.sendEmailCode);
 
 app.get('/', (req, res) => {
     res.send('Echo Server 已启动');

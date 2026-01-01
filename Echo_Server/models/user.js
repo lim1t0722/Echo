@@ -1,9 +1,10 @@
 const db = require('../config/db');
 
 class User {
-  constructor(user_id, phone, created_at) {
+  constructor(user_id, phone, email, created_at) {
     this.user_id = user_id;
     this.phone = phone;
+    this.email = email;
     this.created_at = created_at;
   }
 
@@ -18,7 +19,17 @@ class User {
     try {
       const [rows] = await db.execute('SELECT * FROM users WHERE phone = ? LIMIT 1', [phone]);
       if (rows.length === 0) return null;
-      return new User(rows[0].user_id, rows[0].phone, rows[0].created_at);
+      return new User(rows[0].user_id, rows[0].phone, rows[0].email || null, rows[0].created_at);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  static async findByEmail(email) {
+    try {
+      const [rows] = await db.execute('SELECT * FROM users WHERE email = ? LIMIT 1', [email]);
+      if (rows.length === 0) return null;
+      return new User(rows[0].user_id, rows[0].phone || null, rows[0].email, rows[0].created_at);
     } catch (error) {
       throw error;
     }
@@ -28,17 +39,17 @@ class User {
     try {
       const [rows] = await db.execute('SELECT * FROM users WHERE user_id = ? LIMIT 1', [user_id]);
       if (rows.length === 0) return null;
-      return new User(rows[0].user_id, rows[0].phone, rows[0].created_at);
+      return new User(rows[0].user_id, rows[0].phone || null, rows[0].email || null, rows[0].created_at);
     } catch (error) {
       throw error;
     }
   }
 
-  static async create(phone) {
+  static async create(phone = null, email = null) {
     try {
       const user_id = User.generateUserId();
-      await db.execute('INSERT INTO users (user_id, phone, created_at) VALUES (?, ?, NOW())', [user_id, phone]);
-      return new User(user_id, phone, new Date());
+      await db.execute('INSERT INTO users (user_id, phone, email, created_at) VALUES (?, ?, ?, NOW())', [user_id, phone, email]);
+      return new User(user_id, phone, email, new Date());
     } catch (error) {
       throw error;
     }
@@ -48,6 +59,7 @@ class User {
     return {
       user_id: this.user_id,
       phone: this.phone,
+      email: this.email,
       created_at: this.created_at
     };
   }
