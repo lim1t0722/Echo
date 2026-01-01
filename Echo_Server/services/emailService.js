@@ -31,17 +31,7 @@ class EmailService {
         timestamp: Date.now()
       });
       
-      // 实际项目中会发送真实邮件，这里仅模拟
-      console.log(`[发送验证码] 邮箱: ${email}, 验证码: ${verifyCode}`);
-      
-      // 模拟发送成功
-      return {
-        success: true,
-        message: '验证码已发送',
-        verifyCode: verifyCode
-      };
-      
-      /* 真实发送邮件代码，注释掉以模拟发送
+      // 真实发送邮件
       const info = await this.transporter.sendMail({
         from: process.env.EMAIL_FROM,
         to: email,
@@ -56,6 +46,15 @@ class EmailService {
         success: true,
         message: '验证码已发送',
         messageId: info.messageId,
+        verifyCode: verifyCode
+      };
+      
+      /* 模拟发送邮件代码，已启用真实发送
+      console.log(`[发送验证码] 邮箱: ${email}, 验证码: ${verifyCode}`);
+      
+      return {
+        success: true,
+        message: '验证码已发送',
         verifyCode: verifyCode
       };
       */

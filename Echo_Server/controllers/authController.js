@@ -139,6 +139,88 @@ exports.sendEmailCode = async (req, res) => {
   }
 };
 
+exports.register = async (req, res) => {
+  try {
+    console.log('[接收请求] /api/auth/register', req.body);
+    const { email, nickname, password, verificationCode } = req.body;
+    
+    // 参数验证
+    if (!email || !/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email)) {
+      return res.status(400).json({
+        code: 400,
+        message: '请输入有效的邮箱地址',
+        data: null
+      });
+    }
+    
+    if (!nickname || nickname.length < 2 || nickname.length > 20) {
+      return res.status(400).json({
+        code: 400,
+        message: '昵称长度应在2-20个字符之间',
+        data: null
+      });
+    }
+    
+    if (!password || password.length < 6) {
+      return res.status(400).json({
+        code: 400,
+        message: '密码长度应至少6个字符',
+        data: null
+      });
+    }
+    
+    if (!verificationCode || !/^\d{6}$/.test(verificationCode)) {
+      return res.status(400).json({
+        code: 400,
+        message: '请输入有效的验证码',
+        data: null
+      });
+    }
+    
+    // 验证验证码
+    const verifyResult = await emailService.checkEmailVerifyCode(email, verificationCode);
+    
+    if (!verifyResult.success) {
+      console.error(`[注册失败] 邮箱: ${email}, 验证码错误: ${verifyResult.message}`);
+      return res.status(400).json({
+        code: 400,
+        message: verifyResult.message || '验证码错误或已过期',
+        data: null
+      });
+    }
+    
+    // 检查邮箱是否已注册
+    const existingUser = await User.findByEmail(email);
+    if (existingUser) {
+      return res.status(400).json({
+        code: 400,
+        message: '该邮箱已注册',
+        data: null
+      });
+    }
+    
+    // 创建新用户
+    const user = await User.create(null, email, nickname, password);
+    
+    console.log(`[用户注册成功] 邮箱: ${email}, 昵称: ${nickname}, 用户ID: ${user.user_id}`);
+    
+    res.status(200).json({
+      code: 0,
+      message: '注册成功',
+      data: {
+        user_id: user.user_id
+      }
+    });
+  } catch (error) {
+    console.error('注册异常:', error);
+    res.status(500).json({
+      code: 500,
+      message: '服务器内部错误',
+      data: null
+    });
+  }
+};
+
 exports.verifyCode = async (req, res) => {
   try {
     const { phone, email, code } = req.body;

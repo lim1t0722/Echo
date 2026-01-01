@@ -5,10 +5,10 @@ console.log('开始测试数据库连接...');
 // 测试1: 使用空密码
 console.log('\n测试1: 使用空密码连接');
 const connection1 = mysql.createConnection({
-  host: '127.0.0.1',
+  host: '121.41.105.155',
   port: 3306,
-  user: 'root',
-  password: ''
+  user: 'Echo_admin',
+  password: 'admin123'
 });
 
 connection1.connect((err) => {
