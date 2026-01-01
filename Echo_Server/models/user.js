@@ -53,6 +53,7 @@ class User {
       await db.execute('INSERT INTO users (user_id, phone, email, nickname, password, created_at) VALUES (?, ?, ?, ?, ?, NOW())', [user_id, phone, email, nickname, password]);
       return new User(user_id, phone, email, nickname, password, new Date());
     } catch (error) {
+      console.error('用户创建失败:', error);
       throw error;
     }
   }
