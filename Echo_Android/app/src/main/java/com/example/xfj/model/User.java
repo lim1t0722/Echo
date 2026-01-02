@@ -12,6 +12,7 @@ public class User {
     private String email;
     private String nickname;
     private String avatar;
+    private String token;
     private long lastLoginTime;
 
     @NonNull
@@ -53,5 +54,13 @@ public class User {
 
     public void setLastLoginTime(long lastLoginTime) {
         this.lastLoginTime = lastLoginTime;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 }

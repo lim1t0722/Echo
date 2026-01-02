@@ -39,10 +39,11 @@ public class LoginActivity extends AppCompatActivity {
 
         sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE);
 
-        // Check if user is already logged in
+        // Check if user is already logged in and auto-login is enabled
+        boolean autoLogin = sharedPreferences.getBoolean("auto_login", false);
         String userId = sharedPreferences.getString("user_id", null);
         String email = sharedPreferences.getString("email", null);
-        if (userId != null && email != null) {
+        if (autoLogin && userId != null && email != null) {
             navigateToMain();
             return;
         }
@@ -93,13 +94,14 @@ public class LoginActivity extends AppCompatActivity {
                         
                         // Store user info in SharedPreferences
                         SharedPreferences.Editor editor = sharedPreferences.edit();
-                        editor.putString("token", "sample_token_" + email); // TODO: Replace with actual token from API response
+                        editor.putString("token", user != null ? user.getToken() : ""); // 使用服务器返回的真实token
                         editor.putString("email", email);
-                        editor.putString("user_id", user != null ? user.getUserId() : "user_" + email);
-                        editor.putString("nickname", user != null ? user.getNickname() : "用户" + email.split("@")[0]);
+                        editor.putString("user_id", user != null ? user.getUserId() : ""); // 使用服务器返回的真实user_id
+                        editor.putString("nickname", user != null && user.getNickname() != null ? user.getNickname() : "用户" + email.split("@")[0]);
                         if (user != null && user.getAvatar() != null) {
                             editor.putString("avatar", user.getAvatar());
                         }
+                        editor.putBoolean("auto_login", binding.cbAutoLogin.isChecked());
                         editor.apply();
                         
                         Toast.makeText(LoginActivity.this, "登录成功", Toast.LENGTH_SHORT).show();

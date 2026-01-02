@@ -47,6 +47,16 @@
             android:exported="false"
             android:label="聊天"
             android:theme="@style/Theme.XFJ.NoActionBar" />
+        <activity
+            android:name=".AddFriendActivity"
+            android:exported="false"
+            android:label="添加好友"
+            android:theme="@style/Theme.XFJ.NoActionBar" />
+        <activity
+            android:name=".SettingsActivity"
+            android:exported="false"
+            android:label="设置"
+            android:theme="@style/Theme.XFJ.NoActionBar" />
     </application>
 
 </manifest>

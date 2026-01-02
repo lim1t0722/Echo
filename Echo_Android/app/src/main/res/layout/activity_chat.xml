@@ -36,15 +36,13 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <!-- 消息列表（使用RecyclerView，这里简化为TextView） -->
-    <TextView
-        android:id="@+id/tv_message_list"
+    <!-- 消息列表 -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_messages"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_margin="16dp"
-        android:text="消息列表"
-        android:textSize="16sp"
-        app:layout_constraintBottom_toTopOf="@+id/et_message"
+        app:layout_constraintBottom_toTopOf="@+id/input_layout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/toolbar" />

@@ -193,9 +193,9 @@ public class RegisterActivity extends AppCompatActivity {
                         
                         // Store user info in SharedPreferences
                         SharedPreferences.Editor editor = sharedPreferences.edit();
-                        editor.putString("token", "sample_token_" + email); // TODO: Replace with actual token from API response
+                        editor.putString("token", user != null ? user.getToken() : ""); // 使用服务器返回的真实token
                         editor.putString("email", email);
-                        editor.putString("user_id", user != null ? user.getUserId() : "user_" + email);
+                        editor.putString("user_id", user != null ? user.getUserId() : ""); // 使用服务器返回的真实user_id
                         editor.putString("nickname", user != null && user.getNickname() != null ? user.getNickname() : nickname);
                         if (user != null && user.getAvatar() != null) {
                             editor.putString("avatar", user.getAvatar());

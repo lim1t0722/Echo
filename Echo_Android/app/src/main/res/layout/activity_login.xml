@@ -82,6 +82,16 @@
                         android:textSize="16sp" />
                 </com.google.android.material.textfield.TextInputLayout>
 
+                <CheckBox
+                    android:id="@+id/cb_auto_login"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="自动登录"
+                    android:textSize="16sp"
+                    android:layout_marginTop="12dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/til_password" />
+
                 <com.google.android.material.button.MaterialButton
                     style="@style/RoundedButton"
                     android:id="@+id/btn_login"
@@ -91,7 +101,7 @@
                     android:textSize="18sp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/til_password" />
+                    app:layout_constraintTop_toBottomOf="@+id/cb_auto_login" />
 
                 <ProgressBar
                     android:id="@+id/progress_bar"

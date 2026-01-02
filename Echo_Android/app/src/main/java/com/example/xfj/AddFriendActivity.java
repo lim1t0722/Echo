@@ -1,6 +1,7 @@
 package com.example.xfj;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -17,9 +18,16 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.xfj.adapter.FriendRequestAdapter;
 import com.example.xfj.model.FriendRequest;
 import com.example.xfj.model.User;
+import com.example.xfj.network.ApiResponse;
+import com.example.xfj.network.ApiService;
+import com.example.xfj.network.RetrofitClient;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class AddFriendActivity extends AppCompatActivity {
 
@@ -36,6 +44,9 @@ public class AddFriendActivity extends AppCompatActivity {
     private User searchResultUser;
     private boolean isFromGroup;
     private String groupId;
+    
+    private ApiService apiService;
+    private SharedPreferences sharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +56,10 @@ public class AddFriendActivity extends AppCompatActivity {
         // 获取参数
         isFromGroup = getIntent().getBooleanExtra("from_group", false);
         groupId = getIntent().getStringExtra("group_id");
+
+        // 初始化API服务和SharedPreferences
+        apiService = RetrofitClient.getInstance(this).getApiService();
+        sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE);
 
         initViews();
         initFriendRequests();
@@ -128,39 +143,88 @@ public class AddFriendActivity extends AppCompatActivity {
                 Toast.makeText(this, "请输入搜索关键词", Toast.LENGTH_SHORT).show();
                 return;
             }
-            // 模拟搜索用户
-            simulateSearchUser(keyword);
+            // 真实搜索用户
+            searchUser(keyword);
         });
 
         // 添加好友按钮点击事件
         btnAddFriend.setOnClickListener(v -> {
             if (searchResultUser != null) {
-                // 模拟发送好友请求
-                simulateSendFriendRequest(searchResultUser);
+                // 真实发送好友请求
+                sendFriendRequest(searchResultUser);
             }
         });
     }
 
-    private void simulateSearchUser(String keyword) {
-        // 模拟搜索结果（实际项目中应该调用API）
-        searchResultUser = new User();
-        searchResultUser.setUserId("user_111");
-        searchResultUser.setEmail("test@example.com");
-        searchResultUser.setNickname("测试用户");
+    private void searchUser(String keyword) {
+        // 调用API搜索用户
+        Call<ApiResponse<List<User>>> call = apiService.searchUsers(keyword);
+        call.enqueue(new Callback<ApiResponse<List<User>>>() {
+            @Override
+            public void onResponse(Call<ApiResponse<List<User>>> call, Response<ApiResponse<List<User>>> response) {
+                if (response.isSuccessful() && response.body() != null && response.body().isSuccess()) {
+                    List<User> users = response.body().getData();
+                    if (users != null && !users.isEmpty()) {
+                        // 显示第一个搜索结果
+                        searchResultUser = users.get(0);
+                        tvNickname.setText(searchResultUser.getNickname());
+                        layoutSearchResult.setVisibility(View.VISIBLE);
+                    } else {
+                        Toast.makeText(AddFriendActivity.this, "未找到用户", Toast.LENGTH_SHORT).show();
+                        layoutSearchResult.setVisibility(View.GONE);
+                    }
+                } else {
+                    Toast.makeText(AddFriendActivity.this, "搜索失败", Toast.LENGTH_SHORT).show();
+                    layoutSearchResult.setVisibility(View.GONE);
+                }
+            }
 
-        // 显示搜索结果
-        tvNickname.setText(searchResultUser.getNickname());
-        layoutSearchResult.setVisibility(View.VISIBLE);
+            @Override
+            public void onFailure(Call<ApiResponse<List<User>>> call, Throwable t) {
+                Toast.makeText(AddFriendActivity.this, "网络异常", Toast.LENGTH_SHORT).show();
+                layoutSearchResult.setVisibility(View.GONE);
+            }
+        });
     }
 
-    private void simulateSendFriendRequest(User user) {
-        // 根据是否来自群组执行不同操作
+    private void sendFriendRequest(User user) {
+        if (user == null) return;
+        
+        // 获取当前用户ID
+        String currentUserId = sharedPreferences.getString("user_id", "");
+        
+        // 前端验证规则
+        if (currentUserId.equals(user.getUserId())) {
+            Toast.makeText(this, "不能添加自己为好友", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         if (isFromGroup) {
-            // 模拟邀请成员入群
+            // 模拟邀请成员入群（实际项目中应该调用API）
             Toast.makeText(this, "已邀请" + user.getNickname() + "加入群组", Toast.LENGTH_SHORT).show();
         } else {
-            // 模拟发送好友请求
-            Toast.makeText(this, "好友请求已发送", Toast.LENGTH_SHORT).show();
+            // 发送好友请求API
+            Call<ApiResponse<Void>> call = apiService.addFriend(new ApiService.AddFriendRequest(user.getUserId(), "你好，我想添加你为好友"));
+            call.enqueue(new Callback<ApiResponse<Void>>() {
+                @Override
+                public void onResponse(Call<ApiResponse<Void>> call, Response<ApiResponse<Void>> response) {
+                    if (response.isSuccessful() && response.body() != null) {
+                        if (response.body().isSuccess()) {
+                            Toast.makeText(AddFriendActivity.this, "好友请求已发送", Toast.LENGTH_SHORT).show();
+                        } else {
+                            // 服务器返回错误信息
+                            Toast.makeText(AddFriendActivity.this, response.body().getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        Toast.makeText(AddFriendActivity.this, "发送失败，请重试", Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ApiResponse<Void>> call, Throwable t) {
+                    Toast.makeText(AddFriendActivity.this, "网络异常", Toast.LENGTH_SHORT).show();
+                }
+            });
         }
 
         // 隐藏搜索结果
