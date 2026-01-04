@@ -3,6 +3,7 @@ package com.example.xfj;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.widget.EditText;
@@ -43,20 +44,13 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // 检查用户是否已登录
-        SharedPreferences sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE);
-        String token = sharedPreferences.getString("token", "");
-        if (token.isEmpty()) {
-            // 用户未登录，跳转到登录页面
-            Intent intent = new Intent(this, LoginActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            startActivity(intent);
-            finish();
-            return;
-        }
-
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        // 检查用户登录状态（三态模型）
+        checkUserLoginStatus();
+        
+        // 如果未返回，则继续创建Activity
 
         setSupportActionBar(binding.appBarMain.toolbar);
         binding.appBarMain.fab.setOnClickListener(new View.OnClickListener() {
@@ -69,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
         NavigationView navigationView = binding.navView;
         
         // 从SharedPreferences获取用户信息
+        SharedPreferences sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE);
         String nickname = sharedPreferences.getString("nickname", "未知用户");
         String userId = sharedPreferences.getString("user_id", "");
         
@@ -134,6 +129,49 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
         return NavigationUI.navigateUp(navController, mAppBarConfiguration)
                 || super.onSupportNavigateUp();
+    }
+    
+    /**
+     * 检查用户登录状态（三态模型）
+     * UNLOGIN: user_id为空
+     * REGISTERING: user_id不为空，但is_register_completed为false
+     * LOGINED: user_id不为空，且is_register_completed为true
+     */
+    private void checkUserLoginStatus() {
+        SharedPreferences sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE);
+        String userId = sharedPreferences.getString("user_id", "");
+        boolean isRegisterCompleted = sharedPreferences.getBoolean("is_register_completed", false);
+        
+        // 调试日志
+        Log.d("MainActivity", "当前用户ID: " + userId);
+        Log.d("MainActivity", "注册完成状态: " + isRegisterCompleted);
+        
+        if (userId.isEmpty()) {
+            // UNLOGIN: 用户未登录，跳转到登录页面
+            Log.d("MainActivity", "用户ID为空，跳转至登录页");
+            Intent intent = new Intent(this, LoginActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+            finish();
+        } else if (!isRegisterCompleted) {
+            // REGISTERING: 用户已注册但未完成用户名设置，跳转到设置用户名页面
+            Log.d("MainActivity", "用户已注册但未设置用户名，跳转至设置用户名页");
+            Intent intent = new Intent(this, SetUsernameActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+            finish();
+        } else {
+            // LOGINED: 用户已完成注册并登录，继续进入主界面
+            Log.d("MainActivity", "用户已完成注册并登录，进入主界面");
+        }
+    }
+    
+    @Override
+    protected void onResume() {
+        super.onResume();
+        
+        // 检查用户登录状态（三态模型）
+        checkUserLoginStatus();
     }
 
     private void showQuickMessageDialog() {

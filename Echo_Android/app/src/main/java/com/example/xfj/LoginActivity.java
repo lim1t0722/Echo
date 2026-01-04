@@ -92,17 +92,34 @@ public class LoginActivity extends AppCompatActivity {
                         // Login success
                         User user = apiResponse.getData();
                         
-                        // Store user info in SharedPreferences
+                        // 确保user和userId都有效
+                        if (user == null || user.getUserId() == null || user.getUserId().isEmpty()) {
+                            Toast.makeText(LoginActivity.this, "登录失败，用户信息无效", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                        
+                        // Store user info in SharedPreferences (同步保存)
                         SharedPreferences.Editor editor = sharedPreferences.edit();
-                        editor.putString("token", user != null ? user.getToken() : ""); // 使用服务器返回的真实token
+                        String userId = user.getUserId();
+                        String nickname = user.getNickname() != null ? user.getNickname() : "用户" + email.split("@")[0];
+                        
                         editor.putString("email", email);
-                        editor.putString("user_id", user != null ? user.getUserId() : ""); // 使用服务器返回的真实user_id
-                        editor.putString("nickname", user != null && user.getNickname() != null ? user.getNickname() : "用户" + email.split("@")[0]);
-                        if (user != null && user.getAvatar() != null) {
+                        editor.putString("user_id", userId);
+                        editor.putString("nickname", nickname);
+                        
+                        // 只保留后端实际返回并使用token的相关代码
+                        if (user.getToken() != null) {
+                            editor.putString("token", user.getToken());
+                        }
+                        
+                        if (user.getAvatar() != null) {
                             editor.putString("avatar", user.getAvatar());
                         }
+                        
+                        // 设置注册状态为已完成（登录用户默认已完成注册）
+                        editor.putBoolean("is_register_completed", true);
                         editor.putBoolean("auto_login", binding.cbAutoLogin.isChecked());
-                        editor.apply();
+                        editor.commit(); // 使用commit()确保同步保存
                         
                         Toast.makeText(LoginActivity.this, "登录成功", Toast.LENGTH_SHORT).show();
                         navigateToMain();

@@ -8,10 +8,12 @@ import androidx.room.PrimaryKey;
 public class User {
     @NonNull
     @PrimaryKey
+    @com.google.gson.annotations.SerializedName("user_id")
     private String userId;
     private String email;
     private String nickname;
     private String avatar;
+    @com.google.gson.annotations.SerializedName("token")
     private String token;
     private long lastLoginTime;
 

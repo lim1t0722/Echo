@@ -16,7 +16,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RetrofitClient {
-    private static final String BASE_URL = "http://121.41.105.155:3000/";
+    private static final String BASE_URL = "http://192.168.119.1:3000/";
     private static final long TIMEOUT = 30;
     private static RetrofitClient instance;
     private final Retrofit retrofit;

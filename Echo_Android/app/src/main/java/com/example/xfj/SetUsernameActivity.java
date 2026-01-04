@@ -56,14 +56,7 @@ public class SetUsernameActivity extends AppCompatActivity {
         binding.btnSave.setVisibility(View.GONE);
 
         // Get current user info
-        String userId = sharedPreferences.getString("user_id", null);
-        String email = sharedPreferences.getString("email", null);
-
-        if (userId == null || email == null) {
-            Toast.makeText(this, "用户信息错误", Toast.LENGTH_SHORT).show();
-            navigateToLogin();
-            return;
-        }
+        String userId = sharedPreferences.getString("user_id", "");
 
         // Create API service instance
         ApiService apiService = RetrofitClient.getInstance(this).getApiService();
@@ -84,10 +77,12 @@ public class SetUsernameActivity extends AppCompatActivity {
                         // Update success
                         User user = apiResponse.getData();
 
-                        // Update user info in SharedPreferences
+                        // Update user info in SharedPreferences（使用commit()确保同步保存）
                         SharedPreferences.Editor editor = sharedPreferences.edit();
                         editor.putString("nickname", user != null ? user.getNickname() : username);
-                        editor.apply();
+                        // 设置注册状态为已完成
+                        editor.putBoolean("is_register_completed", true);
+                        editor.commit();
 
                         Toast.makeText(SetUsernameActivity.this, "用户名设置成功", Toast.LENGTH_SHORT).show();
                         navigateToMain();
@@ -121,10 +116,5 @@ public class SetUsernameActivity extends AppCompatActivity {
         finish();
     }
 
-    private void navigateToLogin() {
-        Intent intent = new Intent(SetUsernameActivity.this, LoginActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(intent);
-        finish();
-    }
+
 }

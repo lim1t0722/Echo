@@ -191,16 +191,23 @@ public class RegisterActivity extends AppCompatActivity {
                         // Register success
                         User user = apiResponse.getData();
                         
-                        // Store user info in SharedPreferences
+                        // Store user info in SharedPreferences（使用commit()确保同步保存）
                         SharedPreferences.Editor editor = sharedPreferences.edit();
-                        editor.putString("token", user != null ? user.getToken() : ""); // 使用服务器返回的真实token
+                        // 只保存必要的信息，不设置nickname
                         editor.putString("email", email);
-                        editor.putString("user_id", user != null ? user.getUserId() : ""); // 使用服务器返回的真实user_id
-                        editor.putString("nickname", user != null && user.getNickname() != null ? user.getNickname() : nickname);
+                        // 只在user和userId都有效时才存储userId
+                        if (user != null && user.getUserId() != null && !user.getUserId().isEmpty()) {
+                            editor.putString("user_id", user.getUserId());
+                        }
+                        if (user != null && user.getToken() != null) {
+                            editor.putString("token", user.getToken());
+                        }
                         if (user != null && user.getAvatar() != null) {
                             editor.putString("avatar", user.getAvatar());
                         }
-                        editor.apply();
+                        // 设置注册状态为未完成
+                        editor.putBoolean("is_register_completed", false);
+                        editor.commit();
                         
                         Toast.makeText(RegisterActivity.this, "注册成功，请设置用户名", Toast.LENGTH_SHORT).show();
                         navigateToSetUsername();
