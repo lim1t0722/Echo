@@ -14,4 +14,8 @@
     <color name="green_500">#FF4CAF50</color>
     <color name="red">#FFD50000</color>
     <color name="blue">#FF2196F3</color>
+    <color name="primary_color">#FF6200EE</color>
+    <color name="primary_dark_color">#FF3700B3</color>
+    <color name="success_color">#FF4CAF50</color>
+    <color name="error_color">#FFD50000</color>
 </resources>

@@ -33,29 +33,19 @@
             android:label="注册"
             android:theme="@style/Theme.XFJ.NoActionBar" />
         <activity
-            android:name=".SetUsernameActivity"
+            android:name=".HomeActivity"
             android:exported="false"
-            android:label="设置用户名"
+            android:label="主页"
             android:theme="@style/Theme.XFJ.NoActionBar" />
         <activity
             android:name=".MainActivity"
             android:exported="false"
-            android:label="@string/app_name"
+            android:label="主页"
             android:theme="@style/Theme.XFJ.NoActionBar" />
         <activity
-            android:name=".ChatActivity"
+            android:name=".BirthDateActivity"
             android:exported="false"
-            android:label="聊天"
-            android:theme="@style/Theme.XFJ.NoActionBar" />
-        <activity
-            android:name=".AddFriendActivity"
-            android:exported="false"
-            android:label="添加好友"
-            android:theme="@style/Theme.XFJ.NoActionBar" />
-        <activity
-            android:name=".SettingsActivity"
-            android:exported="false"
-            android:label="设置"
+            android:label="设置出生年月"
             android:theme="@style/Theme.XFJ.NoActionBar" />
     </application>
 

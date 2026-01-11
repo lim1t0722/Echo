@@ -41,28 +41,6 @@ public class TypeConverters {
     }
 
     /**
-     * 将Message对象转换为JSON字符串
-     */
-    @TypeConverter
-    public static String fromMessage(com.example.xfj.model.Message message) {
-        if (message == null) {
-            return null;
-        }
-        return gson.toJson(message);
-    }
-
-    /**
-     * 将JSON字符串转换为Message对象
-     */
-    @TypeConverter
-    public static com.example.xfj.model.Message toMessage(String json) {
-        if (json == null) {
-            return null;
-        }
-        return gson.fromJson(json, com.example.xfj.model.Message.class);
-    }
-
-    /**
      * 将User对象转换为JSON字符串
      */
     @TypeConverter

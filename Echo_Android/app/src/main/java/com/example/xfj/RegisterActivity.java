@@ -209,8 +209,8 @@ public class RegisterActivity extends AppCompatActivity {
                         editor.putBoolean("is_register_completed", false);
                         editor.commit();
                         
-                        Toast.makeText(RegisterActivity.this, "注册成功，请设置用户名", Toast.LENGTH_SHORT).show();
-                        navigateToSetUsername();
+                        Toast.makeText(RegisterActivity.this, "注册成功", Toast.LENGTH_SHORT).show();
+                        navigateToHome();
                     } else {
                         // Register failed with error message
                         String errorMessage = apiResponse != null ? apiResponse.getMessage() : "注册失败";
@@ -248,15 +248,8 @@ public class RegisterActivity extends AppCompatActivity {
         return email.matches(emailPattern);
     }
 
-    private void navigateToMain() {
-        Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(intent);
-        finish();
-    }
-
-    private void navigateToSetUsername() {
-        Intent intent = new Intent(RegisterActivity.this, SetUsernameActivity.class);
+    private void navigateToHome() {
+        Intent intent = new Intent(RegisterActivity.this, HomeActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
         finish();

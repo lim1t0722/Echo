@@ -155,9 +155,21 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void navigateToMain() {
-        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(intent);
+        SharedPreferences sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE);
+        boolean isFirstLogin = sharedPreferences.getBoolean("is_first_login", true);
+        String birthDate = sharedPreferences.getString("birth_date", "");
+
+        // 如果是首次登录或未设置出生年月，跳转到出生年月设置页面
+        if (isFirstLogin || birthDate.isEmpty()) {
+            Intent intent = new Intent(LoginActivity.this, BirthDateActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+        } else {
+            // 否则直接跳转到主页面
+            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+        }
         finish();
     }
 }

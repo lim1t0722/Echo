@@ -17,10 +17,6 @@ app.use(express.json());
 
 app.use('/api/auth', authRoutes);
 
-// 添加用户相关路由
-app.post('/api/users/update', authController.updateUserInfo);
-
-app.post('/api/send_sms', authController.sendCode);
 app.post('/api/send_email', authController.sendEmailCode);
 
 app.get('/', (req, res) => {
